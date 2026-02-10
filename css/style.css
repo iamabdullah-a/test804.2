@@ -7,35 +7,31 @@
     }
     .hidden { opacity: 0 !important; pointer-events: none !important; }
   
-      #loader {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background-color: #0f172a; z-index: 9999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        color: white; transition: opacity 0.5s ease;
+      #overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: 100;
+        display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+        padding-bottom: 50px;
       }
-      .spinner {
-        border: 3px solid rgba(255, 255, 255, 0.1); border-top: 3px solid #3b82f6;
-        border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; margin-bottom: 20px;
+      #enter-ar-btn {
+        pointer-events: auto;
+        padding: 14px 28px;
+        background: #2563eb; color: white;
+        border-radius: 30px; border: none; font-weight: 600; font-size: 16px;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        cursor: pointer; transition: all 0.2s;
+        text-transform: uppercase; letter-spacing: 0.5px;
       }
-      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-      #scanning-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;
-        display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease;
+      #enter-ar-btn:hover { transform: scale(1.05); background: #1d4ed8; }
+      #enter-ar-btn:active { transform: scale(0.98); }
+      #instructions {
+        position: absolute; top: 40px;
+        background: rgba(15, 23, 42, 0.8); color: white;
+        padding: 12px 24px; border-radius: 30px;
+        font-size: 14px; backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+        transition: opacity 0.3s;
+        max-width: 80%;
       }
-      .scanning-guide {
-        width: 60vw; height: 60vw; max-width: 300px; max-height: 300px;
-        border: 2px dashed rgba(255, 255, 255, 0.5); border-radius: 20px;
-        position: relative; background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(0,0,0,0.3) 100%);
-      }
-      .scanning-text {
-        position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
-        white-space: nowrap; color: white; font-weight: 500; font-size: 14px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.8); background-color: rgba(0,0,0,0.6);
-        padding: 8px 16px; border-radius: 20px; backdrop-filter: blur(4px);
-      }
-      video { 
-        position: absolute; top: 0; left: 0; z-index: -2; 
-        object-fit: cover !important; width: 100% !important; height: 100% !important; 
-      }
-      .a-canvas { background-color: transparent !important; }
     
