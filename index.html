@@ -1,45 +1,53 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Untitled Project 1</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    <script src="./js/gesture-detector.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="./js/ar-logic.js"></script>
     <link rel="stylesheet" href="./css/style.css">
-  </head>
-  <body>
-    <div id="loader"><div class="spinner"></div><p>Loading AR Experience...</p></div>
-    <div id="scanning-overlay" class="hidden">
-      <div class="scanning-guide"><div class="scanning-text">Point camera at target</div></div>
+</head>
+<body>
+    <div id="overlay">
+        <div id="instructions">Point camera at floor</div>
+        <button id="enter-ar-btn">Start AR</button>
     </div>
+
+    <!-- WebXR Scene -->
     <a-scene 
-      mindar-image="imageTargetSrc: ./assets/targets.mind; autoStart: false; uiLoading: no; uiScanning: no;" 
-      color-space="sRGB" 
-      renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true;"
-      vr-mode-ui="enabled: false" 
-      device-orientation-permission-ui="enabled: false"
-      gesture-detector>
+      webxr="optionalFeatures: hit-test, dom-overlay; overlayElement: #overlay" 
+      renderer="colorManagement: true; physicallyCorrectLights: true; alpha: true"
+      vr-mode-ui="enabled: false"
+      shadow="type: pcfsoft">
+      
       <a-assets><a-asset-item id="asset-02d3e312-3bee-42bf-9e55-b0ef30ee48b2" src="./assets/Car.glb"></a-asset-item></a-assets>
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-      <a-entity light="type: directional; intensity: 1; castShadow: true" position="1 2 1"></a-entity>
-      <a-entity mindar-image-target="targetIndex: 0">
-        
+
+      <!-- Reticle -->
+      <a-entity id="reticle" simple-ar-hit-test="target: #scene-content" visible="false">
+         <a-ring color="white" radius-inner="0.1" radius-outer="0.11" rotation="-90 0 0" material="shader: flat; opacity: 0.8; transparent: true"></a-ring>
+         <a-circle color="white" radius="0.02" rotation="-90 0 0" material="shader: flat; opacity: 0.8; transparent: true"></a-circle>
+      </a-entity>
+
+      <!-- Content Container (Initially Hidden, placed at 0,0,0 relative to parent but parent moves) -->
+      <a-entity id="scene-content" visible="false" position="0 0 0">
+          
       <a-entity
         gltf-model="#asset-02d3e312-3bee-42bf-9e55-b0ef30ee48b2"
         position="0 0 0"
         rotation="0 0 0"
         scale="1 1 1"
         
-        gesture-handler 
+         
         shadow="cast: true; receive: true"
       ></a-entity>
     
       </a-entity>
+      
+      <!-- Lighting -->
+      <a-entity light="type: ambient; intensity: 0.5"></a-entity>
+      <a-entity light="type: directional; intensity: 1; castShadow: true" position="2 4 2"></a-entity>
     </a-scene>
-  </body>
+</body>
 </html>
