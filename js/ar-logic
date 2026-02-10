@@ -1,0 +1,79 @@
+
+      // Simple AR Hit Test Component
+      AFRAME.registerComponent('simple-ar-hit-test', {
+        schema: { target: {type: 'selector'} },
+        init: function () {
+          this.hitTest = null;
+          this.hitTestSpace = null;
+          this.reticleVisible = false;
+          this.onSessionStarted = this.onSessionStarted.bind(this);
+          this.onSelect = this.onSelect.bind(this);
+          this.el.sceneEl.renderer.xr.addEventListener('sessionstart', this.onSessionStarted);
+        },
+        onSessionStarted: async function (evt) {
+          const session = evt.target;
+          const refSpace = await session.requestReferenceSpace('viewer');
+          this.hitTest = await session.requestHitTestSource({ space: refSpace });
+          this.hitTestSpace = await session.requestReferenceSpace('local');
+          session.addEventListener('select', this.onSelect);
+          document.getElementById('instructions').innerText = "Move phone to detect floor, then tap to place.";
+        },
+        onSelect: function () {
+           if (!this.reticleVisible) return;
+           if (this.data.target) {
+             // Place the content at the reticle position
+             this.data.target.setAttribute('position', this.el.getAttribute('position'));
+             this.data.target.setAttribute('rotation', this.el.getAttribute('rotation'));
+             this.data.target.setAttribute('visible', 'true');
+             document.getElementById('instructions').innerText = "Placed! Drag to rotate (if enabled).";
+           }
+        },
+        tick: function () {
+          if (!this.hitTest) return;
+          const frame = this.el.sceneEl.frame;
+          if (!frame) return;
+          const viewerPose = frame.getViewerPose(this.hitTestSpace);
+          if (!viewerPose) return;
+          const hitTestResults = frame.getHitTestResults(this.hitTest);
+          if (hitTestResults.length > 0) {
+            const hitPose = hitTestResults[0].getPose(this.hitTestSpace);
+            this.el.object3D.visible = true;
+            this.reticleVisible = true;
+            this.el.object3D.position.set(hitPose.transform.position.x, hitPose.transform.position.y, hitPose.transform.position.z);
+            this.el.object3D.quaternion.set(hitPose.transform.orientation.x, hitPose.transform.orientation.y, hitPose.transform.orientation.z, hitPose.transform.orientation.w);
+          } else {
+            this.el.object3D.visible = false;
+            this.reticleVisible = false;
+          }
+        }
+      });
+
+      // Enter AR Button Logic
+      document.addEventListener('DOMContentLoaded', () => {
+        const scene = document.querySelector('a-scene');
+        const btn = document.getElementById('enter-ar-btn');
+        const overlay = document.getElementById('overlay');
+        
+        btn.addEventListener('click', () => {
+          // Check if WebXR is supported
+          if (navigator.xr) {
+            navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+               if (supported) {
+                  scene.enterVR();
+               } else {
+                  alert("WebXR AR not supported on this device/browser.");
+               }
+            });
+          } else {
+             alert("WebXR not found. Please use Chrome on Android.");
+          }
+        });
+        
+        scene.addEventListener('enter-vr', () => {
+             btn.classList.add('hidden');
+        });
+        scene.addEventListener('exit-vr', () => {
+             btn.classList.remove('hidden');
+        });
+      });
+    
